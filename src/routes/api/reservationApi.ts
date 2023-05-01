@@ -111,54 +111,88 @@ export class ReservationApiEndpoint extends ApiEndpoint {
             async (request: Request, response: Response) => {
                 const reservationId = parseInt(request.params["reservationId"]);
                 const { id, inventario, ...changes } = request.body;
-
+    
                 const result = await ReservationDatabase.updateReservationById(
                     reservationId,
                     changes
                 );
-
+    
                 if (inventario && inventario.servicios) {
                     const updatedServices = await ReservationDatabase.updateServices(inventario.servicios);
-                    // Aquí puedes decidir cómo combinar 'result' y 'updatedServices' si es necesario.
-                    // Por ejemplo, podrías agregar 'updatedServices' al objeto 'inventario' en 'result'.
-
+    
                     const prisma = new PrismaClient();
-
+    
                     const serviceIds = [];
                     for (const inv of inventario.servicios) {
-                      const service = await prisma.service.update({
-                        where: { id: inv.id },
-                        data: {
-                          nameService: inv.nameService,
-                          typeService: inv.typeService,
-                          nameSupplier: inv.nameSupplier,
-                          company: inv.company,
-                          phoneNumber: inv.phoneNumber,
-                          description: inv.description,
-                          inventory: {
-                            connect: {
-                              id: inventario.id,
-                            },
-                          },
-                          price: Number(inv.price) 
-                        },
-                      });
-                
-                      serviceIds.push({ id: service.id });
-                  
+                        // Verificar si el servicio ya está asociado con la reservación actual
+                        const existingInventory = await prisma.inventory.findUnique({
+                            where: { id: inventario.id },
+                            include: { servicios: true },
+                        });
+    
+                        let existingService;
+                        if (existingInventory) {
+                            existingService = existingInventory.servicios.find(service => service.id === inv.id);
+                        }
+    
+                        if (existingService) {
+                            // Si el servicio ya está asociado, actualizarlo
+                            await prisma.service.update({
+                                where: { id: inv.id },
+                                data: {
+                                    nameService: inv.nameService,
+                                    typeService: inv.typeService,
+                                    nameSupplier: inv.nameSupplier,
+                                    company: inv.company,
+                                    phoneNumber: inv.phoneNumber,
+                                    description: inv.description,
+                                    inventory: {
+                                        connect: {
+                                            id: inventario.id,
+                                        },
+                                    },
+                                    price: Number(inv.price),
+                                },
+                            });
+                        } else {
+                            // Si no está asociado, crear un nuevo servicio y conectarlo con el inventario
+                            const newService = await prisma.service.create({
+                                data: {
+                                    nameService: inv.nameService,
+                                    typeService: inv.typeService,
+                                    nameSupplier: inv.nameSupplier,
+                                    company: inv.company,
+                                    phoneNumber: inv.phoneNumber,
+                                    description: inv.description,
+                                    inventory: {
+                                        connect: {
+                                            id: inventario.id,
+                                        },
+                                    },
+                                    price: Number(inv.price),
+                                },
+                            });
+    
+                            serviceIds.push({ id: newService.id });
+                        }
                     }
-                
+    
+                    // Conectar el nuevo servicio (copia) con el inventario en lugar del servicio original
                     await prisma.inventory.update({
-                      where: { id: inventario.id },
-                      data: { servicios: { connect: serviceIds } },
+                        where: { id: inventario.id },
+                        data: { servicios: { connect: serviceIds } },
                     });
                 }
-                
+    
                 response.send(result);
             }
         );
         //throw new Error("Method not implemented.");
     }
+    
+    
+    
+    
     public deleteElement(app: any): void {
         app.delete(
             this.getUrlWithExtension("delete/:ReservationId"),

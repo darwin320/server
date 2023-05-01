@@ -89,30 +89,60 @@ class ReservationApiEndpoint extends apiEndpoint_1.ApiEndpoint {
             const result = yield reservationDatabase_1.ReservationDatabase.updateReservationById(reservationId, changes);
             if (inventario && inventario.servicios) {
                 const updatedServices = yield reservationDatabase_1.ReservationDatabase.updateServices(inventario.servicios);
-                // Aquí puedes decidir cómo combinar 'result' y 'updatedServices' si es necesario.
-                // Por ejemplo, podrías agregar 'updatedServices' al objeto 'inventario' en 'result'.
                 const prisma = new client_1.PrismaClient();
                 const serviceIds = [];
                 for (const inv of inventario.servicios) {
-                    const service = yield prisma.service.update({
-                        where: { id: inv.id },
-                        data: {
-                            nameService: inv.nameService,
-                            typeService: inv.typeService,
-                            nameSupplier: inv.nameSupplier,
-                            company: inv.company,
-                            phoneNumber: inv.phoneNumber,
-                            description: inv.description,
-                            inventory: {
-                                connect: {
-                                    id: inventario.id,
-                                },
-                            },
-                            price: Number(inv.price)
-                        },
+                    // Verificar si el servicio ya está asociado con la reservación actual
+                    const existingInventory = yield prisma.inventory.findUnique({
+                        where: { id: inventario.id },
+                        include: { servicios: true },
                     });
-                    serviceIds.push({ id: service.id });
+                    let existingService;
+                    if (existingInventory) {
+                        existingService = existingInventory.servicios.find(service => service.id === inv.id);
+                    }
+                    if (existingService) {
+                        // Si el servicio ya está asociado, actualizarlo
+                        yield prisma.service.update({
+                            where: { id: inv.id },
+                            data: {
+                                nameService: inv.nameService,
+                                typeService: inv.typeService,
+                                nameSupplier: inv.nameSupplier,
+                                company: inv.company,
+                                phoneNumber: inv.phoneNumber,
+                                description: inv.description,
+                                inventory: {
+                                    connect: {
+                                        id: inventario.id,
+                                    },
+                                },
+                                price: Number(inv.price),
+                            },
+                        });
+                    }
+                    else {
+                        // Si no está asociado, crear un nuevo servicio y conectarlo con el inventario
+                        const newService = yield prisma.service.create({
+                            data: {
+                                nameService: inv.nameService,
+                                typeService: inv.typeService,
+                                nameSupplier: inv.nameSupplier,
+                                company: inv.company,
+                                phoneNumber: inv.phoneNumber,
+                                description: inv.description,
+                                inventory: {
+                                    connect: {
+                                        id: inventario.id,
+                                    },
+                                },
+                                price: Number(inv.price),
+                            },
+                        });
+                        serviceIds.push({ id: newService.id });
+                    }
                 }
+                // Conectar el nuevo servicio (copia) con el inventario en lugar del servicio original
                 yield prisma.inventory.update({
                     where: { id: inventario.id },
                     data: { servicios: { connect: serviceIds } },
