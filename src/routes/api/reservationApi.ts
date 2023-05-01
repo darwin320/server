@@ -118,6 +118,7 @@ export class ReservationApiEndpoint extends ApiEndpoint {
                 );
     
                 if (inventario && inventario.servicios) {
+                    console.log(inventario.servicios)
                     const updatedServices = await ReservationDatabase.updateServices(inventario.servicios);
     
                     const prisma = new PrismaClient();

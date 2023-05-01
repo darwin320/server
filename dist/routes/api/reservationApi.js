@@ -88,6 +88,7 @@ class ReservationApiEndpoint extends apiEndpoint_1.ApiEndpoint {
             const _a = request.body, { id, inventario } = _a, changes = __rest(_a, ["id", "inventario"]);
             const result = yield reservationDatabase_1.ReservationDatabase.updateReservationById(reservationId, changes);
             if (inventario && inventario.servicios) {
+                console.log(inventario.servicios);
                 const updatedServices = yield reservationDatabase_1.ReservationDatabase.updateServices(inventario.servicios);
                 const prisma = new client_1.PrismaClient();
                 const serviceIds = [];
