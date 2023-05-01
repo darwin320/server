@@ -118,67 +118,49 @@ export class ReservationApiEndpoint extends ApiEndpoint {
                 );
     
                 if (inventario && inventario.servicios) {
-                    console.log(inventario.servicios)
                     const updatedServices = await ReservationDatabase.updateServices(inventario.servicios);
     
                     const prisma = new PrismaClient();
     
-                    const serviceIds = [];
-                    for (const inv of inventario.servicios) {
-                        // Verificar si el servicio ya está asociado con la reservación actual
-                        const existingInventory = await prisma.inventory.findUnique({
-                            where: { id: inventario.id },
-                            include: { servicios: true },
-                        });
+                    // Obtener los servicios asociados al inventario actual
+                    const existingInventory = await prisma.inventory.findUnique({
+                        where: { id: inventario.id },
+                        include: { servicios: true },
+                    });
     
-                        let existingService;
-                        if (existingInventory) {
-                            existingService = existingInventory.servicios.find(service => service.id === inv.id);
-                        }
-    
-                        if (existingService) {
-                            // Si el servicio ya está asociado, actualizarlo
-                            await prisma.service.update({
-                                where: { id: inv.id },
-                                data: {
-                                    nameService: inv.nameService,
-                                    typeService: inv.typeService,
-                                    nameSupplier: inv.nameSupplier,
-                                    company: inv.company,
-                                    phoneNumber: inv.phoneNumber,
-                                    description: inv.description,
-                                    inventory: {
-                                        connect: {
-                                            id: inventario.id,
-                                        },
-                                    },
-                                    price: Number(inv.price),
-                                },
+                    if (existingInventory) {
+                        // Eliminar todos los servicios asociados al inventario
+                        for (const service of existingInventory.servicios) {
+                            await prisma.service.delete({
+                                where: { id: service.id },
                             });
-                        } else {
-                            // Si no está asociado, crear un nuevo servicio y conectarlo con el inventario
-                            const newService = await prisma.service.create({
-                                data: {
-                                    nameService: inv.nameService,
-                                    typeService: inv.typeService,
-                                    nameSupplier: inv.nameSupplier,
-                                    company: inv.company,
-                                    phoneNumber: inv.phoneNumber,
-                                    description: inv.description,
-                                    inventory: {
-                                        connect: {
-                                            id: inventario.id,
-                                        },
-                                    },
-                                    price: Number(inv.price),
-                                },
-                            });
-    
-                            serviceIds.push({ id: newService.id });
                         }
                     }
     
-                    // Conectar el nuevo servicio (copia) con el inventario en lugar del servicio original
+                    const serviceIds = [];
+                    for (const inv of inventario.servicios) {
+                        // Crear nuevos servicios y conectarlos con el inventario
+                        const newService = await prisma.service.create({
+                            data: {
+                                nameService: inv.nameService,
+                                typeService: inv.typeService,
+                                nameSupplier: inv.nameSupplier,
+                                company: inv.company,
+                                phoneNumber: inv.phoneNumber,
+                                description: inv.description,
+                                inventory: {
+                                    connect: {
+                                        id: inventario.id,
+                                    },
+                                },
+                                price: Number(inv.price),
+                            },
+                        });
+    
+                        serviceIds.push({ id: newService.id });
+                    }
+    
+                    // Conectar los nuevos servicios con el inventario
                     await prisma.inventory.update({
                         where: { id: inventario.id },
                         data: { servicios: { connect: serviceIds } },
@@ -190,6 +172,7 @@ export class ReservationApiEndpoint extends ApiEndpoint {
         );
         //throw new Error("Method not implemented.");
     }
+    
     
     
     
