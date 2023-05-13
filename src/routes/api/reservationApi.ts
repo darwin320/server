@@ -154,6 +154,7 @@ export class ReservationApiEndpoint extends ApiEndpoint {
                                     },
                                 },
                                 price: Number(inv.price),
+                                earningsPer : Number(inv.earningsPer)
                             },
                         });
     

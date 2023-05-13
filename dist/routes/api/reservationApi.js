@@ -120,6 +120,7 @@ class ReservationApiEndpoint extends apiEndpoint_1.ApiEndpoint {
                                 },
                             },
                             price: Number(inv.price),
+                            earningsPer: Number(inv.earningsPer)
                         },
                     });
                     serviceIds.push({ id: newService.id });

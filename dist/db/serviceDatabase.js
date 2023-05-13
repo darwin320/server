@@ -25,7 +25,8 @@ var ServiceDatabase;
                         company: serviceInformation.company,
                         phoneNumber: serviceInformation.phoneNumber,
                         description: serviceInformation.description,
-                        price: serviceInformation.price
+                        price: serviceInformation.price,
+                        earningsPer: serviceInformation.earningsPer
                     },
                 });
                 return service !== null && service !== void 0 ? service : null;

@@ -89,7 +89,8 @@ export class ServicesApiEndpoint extends ApiEndpoint {
                     company:       request.body.company,
                     phoneNumber: request.body.phoneNumber,
                     description: request.body.description,
-                    price: request.body.price
+                    price: request.body.price,
+                    earningsPer: request.body.earningsPer
                 });
                 response.send(result);
             }

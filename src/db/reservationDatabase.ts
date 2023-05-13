@@ -167,7 +167,8 @@ export namespace ReservationDatabase{
                     id: inventory.id,
                   },
                 },
-                price: Number(inv.price) 
+                price: Number(inv.price),
+                earningsPer: Number(inv.earningsPer)
               },
             });
       
@@ -234,6 +235,7 @@ export namespace ReservationDatabase{
                 const updatedServiceData = {
                     ...service,
                     price: parseFloat(service.price as unknown as string),
+                    earningsPer: parseFloat(service.earningsPer as unknown as string),
                 };
                 const updatedService = await prisma.service.update({
                     where: {

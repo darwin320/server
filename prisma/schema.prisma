@@ -83,6 +83,7 @@ model Service {
   phoneNumber   String   @db.VarChar(200)
   description   String
   price         Float?
+  earningsPer   Float?
   inventory     Inventory[] // add this line
 }
 

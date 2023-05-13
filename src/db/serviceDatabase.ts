@@ -9,8 +9,8 @@ export namespace ServiceDatabase {
         company: string;
         phoneNumber: string;
         description: string;
-        price: number
-       
+        price: number;
+        earningsPer: number;
     }) {
         return await withPrismaClient<Service | null>(
             async (prisma: PrismaClient) => {
@@ -22,7 +22,8 @@ export namespace ServiceDatabase {
                         company:       serviceInformation.company,
                         phoneNumber: serviceInformation.phoneNumber,
                         description: serviceInformation.description,
-                        price: serviceInformation.price
+                        price: serviceInformation.price,
+                        earningsPer: serviceInformation.earningsPer
                     },
                 });
                 return service ?? null;

@@ -140,7 +140,8 @@ var ReservationDatabase;
                                     id: inventory.id,
                                 },
                             },
-                            price: Number(inv.price)
+                            price: Number(inv.price),
+                            earningsPer: Number(inv.earningsPer)
                         },
                     });
                     serviceIds.push({ id: service.id });
@@ -202,7 +203,7 @@ var ReservationDatabase;
             return yield (0, database_1.withPrismaClient)((prisma) => __awaiter(this, void 0, void 0, function* () {
                 const updatedServices = [];
                 for (const service of services) {
-                    const updatedServiceData = Object.assign(Object.assign({}, service), { price: parseFloat(service.price) });
+                    const updatedServiceData = Object.assign(Object.assign({}, service), { price: parseFloat(service.price), earningsPer: parseFloat(service.earningsPer) });
                     const updatedService = yield prisma.service.update({
                         where: {
                             id: service.id,
