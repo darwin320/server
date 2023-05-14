@@ -49,7 +49,10 @@ import session from "express-session";
         CronJobManager.getInstance();
        
         app.listen(process.env.PORT, () => {
+            console.log(process.env.DATABASE_URL)
             console.log(`Server listening on ${process.env.PORT}!`);
+            
+            
         });
         
 

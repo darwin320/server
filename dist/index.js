@@ -60,5 +60,6 @@ app.use(passport_1.default.session());
 (0, apis_1.configureApiModule)(app);
 cron_js_1.CronJobManager.getInstance();
 app.listen(process.env.PORT, () => {
+    console.log(process.env.DATABASE_URL);
     console.log(`Server listening on ${process.env.PORT}!`);
 });
