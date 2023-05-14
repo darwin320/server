@@ -106,6 +106,7 @@ function authorizeOnRole(request, response, next) {
 }
 exports.authorizeOnRole = authorizeOnRole;
 function configureAuthModule(app) {
+    console.log("HELLO");
     app.post("/login/password", passport_1.default.authenticate("local", {
         failureMessage: true,
         successMessage: true,

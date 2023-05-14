@@ -134,7 +134,7 @@ export async function authorizeOnRole(
 
 
 export function configureAuthModule(app: any) {
-    
+    console.log("HELLO")
     app.post(
         
         "/login/password",
