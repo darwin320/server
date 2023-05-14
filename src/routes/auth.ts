@@ -65,8 +65,9 @@ export function authorize(
     response: Response,
     next: NextFunction
     
-) {
     
+) {
+    console.log("FLAG1")
     if (request.user) { 
         next();
     } else {

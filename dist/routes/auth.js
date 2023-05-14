@@ -52,6 +52,7 @@ passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 
     done(null, user);
 }));
 function authorize(request, response, next) {
+    console.log("FLAG1");
     if (request.user) {
         next();
     }
