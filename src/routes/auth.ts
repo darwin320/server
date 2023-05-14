@@ -134,28 +134,25 @@ export async function authorizeOnRole(
 
 
 export function configureAuthModule(app: any) {
-    console.log("HELLO")
     app.post(
-        
         "/login/password",
         passport.authenticate("local", {
             failureMessage: true,
             successMessage: true,
         }),
-        
-        
         (req: Request, res: Response) => {
-            console.log("here")
             const user = req.user as AuthenticatedUser;
             console.log(user)
             res.status(200).json({ token: user.token });
-            
         }
     );
 
     app.get("/auth/canActivate", authorize, (_: Request, response: Response) =>
+       
         response.sendStatus(200)
+        
     );
+    
 
     app.post(
         "/logout",

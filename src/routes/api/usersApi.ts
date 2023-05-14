@@ -18,11 +18,13 @@ export class UsersApiEndpoint extends ApiEndpoint {
     public getElements(_app: any): void {}
 
     public searchElements(app: any): void {
+        
         app.post(
             this.getUrlWithExtension("search"),
             authorize,
             authorizeOnRole,
             async (request: Request, response: Response) => {
+                
                 const search = request.body.userSearch;
                 const skip = request.body.skip;
                 const take = request.body.take;
