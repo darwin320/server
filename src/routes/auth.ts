@@ -136,6 +136,7 @@ export async function authorizeOnRole(
 
 
 export function configureAuthModule(app: any) {
+    console.log("FE")
     app.post(
         
         "/login/password",
@@ -146,7 +147,7 @@ export function configureAuthModule(app: any) {
         (req: Request, res: Response) => {
             const user = req.user as AuthenticatedUser;
             console.log(user)
-            res.status(200).json({ token: user.token });
+            res.status(200).json({ token: user.token } );
         }
     );
 
