@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizeOnRole = exports.configureAuthModule = exports.authorize = void 0;
+exports.authorizeOnRole = exports.authorize = exports.configureAuthModule = void 0;
 const bcrypt_1 = require("bcrypt");
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = require("passport-local");
@@ -51,17 +51,6 @@ passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 
     const user = yield userDatabase_1.UserDatabase.getUserById(id);
     done(null, user);
 }));
-function authorize(request, response, next) {
-    console.log("FLAG1");
-    console.log("REQUEST", request.user);
-    if (request.user) {
-        next();
-    }
-    else {
-        response.sendStatus(401);
-    }
-}
-exports.authorize = authorize;
 function configureAuthModule(app) {
     app.post("/login/password", passport_1.default.authenticate("local", {
         failureMessage: true,
@@ -81,6 +70,19 @@ function configureAuthModule(app) {
     });
 }
 exports.configureAuthModule = configureAuthModule;
+function authorize(request, response, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("FLAG1");
+        console.log("REQUEST", request.user);
+        if (request.user) {
+            next();
+        }
+        else {
+            response.sendStatus(401);
+        }
+    });
+}
+exports.authorize = authorize;
 function authorizeOnRole(request, response, next) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {

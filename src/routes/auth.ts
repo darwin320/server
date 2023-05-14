@@ -59,23 +59,7 @@ passport.deserializeUser(async (id: number, done) => {
     done(null, user);
 });
 
-export function authorize(
-    
-    request: Request,
-    response: Response,
-    next: NextFunction
-    
-    
-) {
-    console.log("FLAG1")
-    console.log("REQUEST", request.user)
-    if (request.user) { 
-        next();
-    } else {
-        response.sendStatus(401);
 
-    }
-}
 
 
 
@@ -110,6 +94,24 @@ export function configureAuthModule(app: any) {
             });
         }
     );
+}
+
+export async function authorize(
+    
+    request: Request,
+    response: Response,
+    next: NextFunction
+    
+    
+) {
+    console.log("FLAG1")
+    console.log("REQUEST", request.user)
+    if (request.user) { 
+        next();
+    } else {
+        response.sendStatus(401);
+
+    }
 }
 
 export async function authorizeOnRole(
