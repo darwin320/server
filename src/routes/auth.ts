@@ -49,15 +49,7 @@ passport.use(
     )
 );
 
-passport.serializeUser((user: any | User, done) => {
-    const us = user
-    done(null, us.user.id);
-});
 
-passport.deserializeUser(async (id: number, done) => {
-    const user = await UserDatabase.getUserById(id);
-    done(null, user);
-});
 
 
 
@@ -71,6 +63,7 @@ export function configureAuthModule(app: any) {
         passport.authenticate("local", {
             failureMessage: true,
             successMessage: true,
+            session: false
         }),
         (req: Request, res: Response) => {
             const user = req.user as AuthenticatedUser;
@@ -97,22 +90,31 @@ export function configureAuthModule(app: any) {
 }
 
 export async function authorize(
-    
     request: Request,
     response: Response,
     next: NextFunction
-    
-    
 ) {
-    console.log("FLAG1")
-    console.log("REQUEST", request.user)
-    if (request.user) { 
-        next();
-    } else {
-        response.sendStatus(401);
+    const authHeader = request.headers.authorization;
+    if (!authHeader) {
+        return response.sendStatus(401);
+    }
 
+    const token = authHeader?.split(" ")[1]?.replace(/^"|"$/g, "");
+
+    
+    try {
+        const decoded = jwt.verify(token, 'Claralia') as { userId: number };
+        const user = await UserDatabase.getUserById(decoded.userId);
+        if (!user) {
+            return response.sendStatus(401);
+        }
+        request.user = user;
+        next();
+    } catch (err) {
+        return response.sendStatus(401);
     }
 }
+
 
 export async function authorizeOnRole(
     request: Request,

@@ -43,18 +43,11 @@ passport_1.default.use("local", new passport_local_1.Strategy({
         }
     });
 }));
-passport_1.default.serializeUser((user, done) => {
-    const us = user;
-    done(null, us.user.id);
-});
-passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield userDatabase_1.UserDatabase.getUserById(id);
-    done(null, user);
-}));
 function configureAuthModule(app) {
     app.post("/login/password", passport_1.default.authenticate("local", {
         failureMessage: true,
         successMessage: true,
+        session: false
     }), (req, res) => {
         const user = req.user;
         if (req.user) {
@@ -71,14 +64,24 @@ function configureAuthModule(app) {
 }
 exports.configureAuthModule = configureAuthModule;
 function authorize(request, response, next) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("FLAG1");
-        console.log("REQUEST", request.user);
-        if (request.user) {
+        const authHeader = request.headers.authorization;
+        if (!authHeader) {
+            return response.sendStatus(401);
+        }
+        const token = (_a = authHeader === null || authHeader === void 0 ? void 0 : authHeader.split(" ")[1]) === null || _a === void 0 ? void 0 : _a.replace(/^"|"$/g, "");
+        try {
+            const decoded = jsonwebtoken_1.default.verify(token, 'Claralia');
+            const user = yield userDatabase_1.UserDatabase.getUserById(decoded.userId);
+            if (!user) {
+                return response.sendStatus(401);
+            }
+            request.user = user;
             next();
         }
-        else {
-            response.sendStatus(401);
+        catch (err) {
+            return response.sendStatus(401);
         }
     });
 }

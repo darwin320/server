@@ -26,21 +26,6 @@ import session from "express-session";
             credentials: true  ,
         }));
 
-        app.use(
-            session({
-                secret: "Claralia",
-                proxy: true,
-                resave: false,
-                saveUninitialized: true,
-                cookie: {
-                    secure: process.env.IS_PROD === "true",
-                    sameSite: process.env.IS_PROD === "true" ? "none" : false,
-                },
-            })
-        );
-
-        app.use(passport.initialize());
-        app.use(passport.session());
             
         configureAuthModule(app);
         
