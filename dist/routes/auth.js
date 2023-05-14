@@ -54,7 +54,6 @@ passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 
 function authorize(request, response, next) {
     console.log("FLAG1");
     console.log("REQUEST", request);
-    console.log("REQUESTuser", request.user);
     if (request.user) {
         next();
     }
@@ -71,7 +70,6 @@ function authorizeOnRole(request, response, next) {
             const decodedToken = jsonwebtoken_1.default.verify(token, "Claralia");
             const userId = decodedToken.userId;
             const dbUser = yield userDatabase_1.UserDatabase.getUserById(userId);
-            console.log(dbUser);
             // You see all of this?
             // All of this is needed so we take the second part of the url to see
             // if the user has permission to the API route. So, take a look a this
@@ -91,11 +89,9 @@ function authorizeOnRole(request, response, next) {
             const permission = yield (0, permissions_1.getUserRolePermissionsOnAPI)(request.user.id, 
             // This is needed so the arguments, queries and such, don't kill this.
             routeApi);
-            console.log(permission);
             // Check if the permission exists and then if the role can execute that
             // permission.
             if (permission && (0, permissions_1.canRoleExecuteMethod)(permission, request.method) && dbUser) {
-                console.log("OneValidation");
                 request.user = dbUser;
                 next();
             }
@@ -110,13 +106,11 @@ function authorizeOnRole(request, response, next) {
 }
 exports.authorizeOnRole = authorizeOnRole;
 function configureAuthModule(app) {
-    console.log("FE");
     app.post("/login/password", passport_1.default.authenticate("local", {
         failureMessage: true,
         successMessage: true,
     }), (req, res) => {
         const user = req.user;
-        console.log(user);
         res.status(200).json({ token: user.token });
     });
     app.get("/auth/canActivate", authorize, (_, response) => response.sendStatus(200));

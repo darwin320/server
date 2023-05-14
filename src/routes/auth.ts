@@ -69,12 +69,11 @@ export function authorize(
 ) {
     console.log("FLAG1")
     console.log("REQUEST", request)
-    console.log("REQUESTuser", request.user)
     if (request.user) { 
         next();
     } else {
         response.sendStatus(401);
-        
+
     }
 }
 
@@ -93,7 +92,6 @@ export async function authorizeOnRole(
         const userId = decodedToken.userId;
         const dbUser = await UserDatabase.getUserById(userId);
      
-        console.log(dbUser)
        
         // You see all of this?
         // All of this is needed so we take the second part of the url to see
@@ -120,14 +118,12 @@ export async function authorizeOnRole(
             routeApi
         );
        
-        console.log(permission)
 
       
         
         // Check if the permission exists and then if the role can execute that
         // permission.
         if (permission && canRoleExecuteMethod(permission, request.method) && dbUser) {
-            console.log("OneValidation")
             request.user = dbUser;
             next();
         }else {
@@ -140,7 +136,6 @@ export async function authorizeOnRole(
 
 
 export function configureAuthModule(app: any) {
-    console.log("FE")
     app.post(
         
         "/login/password",
@@ -150,7 +145,6 @@ export function configureAuthModule(app: any) {
         }),
         (req: Request, res: Response) => {
             const user = req.user as AuthenticatedUser;
-            console.log(user)
             res.status(200).json({ token: user.token } );
         }
     );
