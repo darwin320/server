@@ -68,13 +68,48 @@ export function authorize(
     
 ) {
     console.log("FLAG1")
-    console.log("REQUEST", request)
+    console.log("REQUEST", request.user)
     if (request.user) { 
         next();
     } else {
         response.sendStatus(401);
 
     }
+}
+
+
+
+
+export function configureAuthModule(app: any) {
+    app.post(
+        
+        "/login/password",
+        passport.authenticate("local", {
+            failureMessage: true,
+            successMessage: true,
+        }),
+        (req: Request, res: Response) => {
+            const user = req.user as AuthenticatedUser;
+            if(req.user){
+                console.log("validadte Correct")
+            }
+            res.status(200).json({ token: user.token } );
+        }
+    );
+
+    app.get("/auth/canActivate", authorize, (_: Request, response: Response) =>
+        response.sendStatus(200)
+    );
+
+    app.post(
+        "/logout",
+        authorize,
+        (request: Request, response: Response, next: NextFunction) => {
+            request.session.destroy((_) => {
+                response.sendStatus(200);
+            });
+        }
+    );
 }
 
 export async function authorizeOnRole(
@@ -132,34 +167,4 @@ export async function authorizeOnRole(
     } else {
         response.sendStatus(401);
     }
-}
-
-
-export function configureAuthModule(app: any) {
-    app.post(
-        
-        "/login/password",
-        passport.authenticate("local", {
-            failureMessage: true,
-            successMessage: true,
-        }),
-        (req: Request, res: Response) => {
-            const user = req.user as AuthenticatedUser;
-            res.status(200).json({ token: user.token } );
-        }
-    );
-
-    app.get("/auth/canActivate", authorize, (_: Request, response: Response) =>
-        response.sendStatus(200)
-    );
-
-    app.post(
-        "/logout",
-        authorize,
-        (request: Request, response: Response, next: NextFunction) => {
-            request.session.destroy((_) => {
-                response.sendStatus(200);
-            });
-        }
-    );
 }
