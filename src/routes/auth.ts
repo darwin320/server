@@ -6,6 +6,7 @@ import { UserDatabase } from "../db/userDatabase";
 import { canRoleExecuteMethod,getUserRolePermissionsOnAPI} from "../auth/permissions"
 import jwt from 'jsonwebtoken';
 import { User as PrismaUser } from '@prisma/client';
+import { CONNREFUSED } from 'dns';
 
 interface User extends PrismaUser {
     token?: string;
@@ -144,6 +145,7 @@ export function configureAuthModule(app: any) {
         }),
         (req: Request, res: Response) => {
             const user = req.user as AuthenticatedUser;
+            console.log(user)
             res.status(200).json({ token: user.token });
         }
     );

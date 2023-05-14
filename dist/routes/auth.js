@@ -112,6 +112,7 @@ function configureAuthModule(app) {
         successMessage: true,
     }), (req, res) => {
         const user = req.user;
+        console.log(user);
         res.status(200).json({ token: user.token });
     });
     app.get("/auth/canActivate", authorize, (_, response) => response.sendStatus(200));
