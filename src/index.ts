@@ -22,7 +22,7 @@ import session from "express-session";
         );
 
         app.use(cors({
-            origin: process.env.CORS_URL,
+            origin: ['http://localhost:4200', 'https://frontend-r83i.vercel.app'],
             credentials: true  ,
         }));
 
