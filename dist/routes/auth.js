@@ -63,13 +63,12 @@ exports.authorize = authorize;
 function authorizeOnRole(request, response, next) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
-        const user = request.user;
         const token = (_b = (_a = request.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1]) === null || _b === void 0 ? void 0 : _b.replace(/^"|"$/g, "");
-        const check = user && token;
         if (request.user) {
             const decodedToken = jsonwebtoken_1.default.verify(token, "Claralia");
             const userId = decodedToken.userId;
             const dbUser = yield userDatabase_1.UserDatabase.getUserById(userId);
+            console.log(dbUser);
             // You see all of this?
             // All of this is needed so we take the second part of the url to see
             // if the user has permission to the API route. So, take a look a this
@@ -89,9 +88,11 @@ function authorizeOnRole(request, response, next) {
             const permission = yield (0, permissions_1.getUserRolePermissionsOnAPI)(request.user.id, 
             // This is needed so the arguments, queries and such, don't kill this.
             routeApi);
+            console.log(permission);
             // Check if the permission exists and then if the role can execute that
             // permission.
             if (permission && (0, permissions_1.canRoleExecuteMethod)(permission, request.method) && dbUser) {
+                console.log("OneValidation");
                 request.user = dbUser;
                 next();
             }
@@ -111,7 +112,6 @@ function configureAuthModule(app) {
         successMessage: true,
     }), (req, res) => {
         const user = req.user;
-        console.log(user);
         res.status(200).json({ token: user.token });
     });
     app.get("/auth/canActivate", authorize, (_, response) => response.sendStatus(200));

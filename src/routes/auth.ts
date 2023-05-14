@@ -67,7 +67,6 @@ export function authorize(
 ) {
     
     if (request.user) { 
-        
         next();
     } else {
         response.sendStatus(401);
@@ -80,17 +79,16 @@ export async function authorizeOnRole(
     next: NextFunction
     
 ) {
-    const user = request.user;
+    
     const token = request.headers.authorization?.split(" ")[1]?.replace(/^"|"$/g, "");
-    const check = user && token;
-   
+    
     if (request.user) {
      
         const decodedToken = jwt.verify(token!, "Claralia") as { userId: number, };
         const userId = decodedToken.userId;
         const dbUser = await UserDatabase.getUserById(userId);
      
-        
+        console.log(dbUser)
        
         // You see all of this?
         // All of this is needed so we take the second part of the url to see
@@ -113,15 +111,18 @@ export async function authorizeOnRole(
         const permission = await getUserRolePermissionsOnAPI(
             (request.user as User).id,
             // This is needed so the arguments, queries and such, don't kill this.
+            
             routeApi
         );
        
+        console.log(permission)
 
       
         
         // Check if the permission exists and then if the role can execute that
         // permission.
         if (permission && canRoleExecuteMethod(permission, request.method) && dbUser) {
+            console.log("OneValidation")
             request.user = dbUser;
             next();
         }else {
@@ -143,7 +144,6 @@ export function configureAuthModule(app: any) {
         }),
         (req: Request, res: Response) => {
             const user = req.user as AuthenticatedUser;
-            console.log(user)
             res.status(200).json({ token: user.token });
         }
     );
