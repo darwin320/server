@@ -68,10 +68,13 @@ export function authorize(
     
 ) {
     console.log("FLAG1")
+    console.log("REQUEST", request)
+    console.log("REQUESTuser", request.user)
     if (request.user) { 
         next();
     } else {
         response.sendStatus(401);
+        
     }
 }
 
