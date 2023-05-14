@@ -135,6 +135,7 @@ export async function authorizeOnRole(
 
 export function configureAuthModule(app: any) {
     app.post(
+        
         "/login/password",
         passport.authenticate("local", {
             failureMessage: true,
@@ -148,11 +149,8 @@ export function configureAuthModule(app: any) {
     );
 
     app.get("/auth/canActivate", authorize, (_: Request, response: Response) =>
-       
         response.sendStatus(200)
-        
     );
-    
 
     app.post(
         "/logout",
