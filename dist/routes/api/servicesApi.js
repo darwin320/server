@@ -15,6 +15,12 @@ const serviceDatabase_1 = require("../../db/serviceDatabase");
 const apiEndpoint_1 = require("../api/apiEndpoint");
 const auth_1 = require("../auth");
 class ServicesApiEndpoint extends apiEndpoint_1.ApiEndpoint {
+    checkoutElement(app) {
+        //throw new Error("Method not implemented.");
+    }
+    registerCustomMethodsTwo(app) {
+        //throw new Error("Method not implemented.");
+    }
     constructor() {
         super("services");
     }

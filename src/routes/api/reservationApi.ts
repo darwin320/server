@@ -6,12 +6,16 @@ import { authorize, authorizeOnRole } from "../auth";
 import { PrismaClient } from "@prisma/client";
 
 export class ReservationApiEndpoint extends ApiEndpoint {
+ 
 
 
     constructor() {
         super("reservations");
         
     }
+
+
+    
 
     public getElements(app: any): void {
         app.get(
@@ -49,11 +53,13 @@ export class ReservationApiEndpoint extends ApiEndpoint {
                 const search = request.body.userSearch;
                 const skip = request.body.skip;
                 const take = request.body.take; 
+                const validator = request.body.validator;
  
                 const result = await ReservationDatabase.searchReservation(
                     search,
                     skip,
-                    take
+                    take,
+                    validator
                 );
                 response.send(result);
             }
@@ -94,6 +100,7 @@ export class ReservationApiEndpoint extends ApiEndpoint {
                     tipoEvento : request.body.tipoEvento,
                     downPayment: request.body.downPayment,
                     priceRoomPerHour: request.body.priceRoomPerHour,
+                    checkout: request.body.checkout,
                     inventory: request.body.inventory
                 });
                 response.send(result); 
@@ -195,6 +202,24 @@ export class ReservationApiEndpoint extends ApiEndpoint {
         );
         //throw new Error("Method not implemented.");
     }
+
+    public checkoutElement(app: any): void {
+        app.delete(
+            this.getUrlWithExtension("checkout/:ReservationId"),
+            authorize,
+            authorizeOnRole,
+            logMotion,
+            async (request: Request, response: Response) => {
+                const reservationId = parseInt(request.params["ReservationId"]);
+
+                const result = await ReservationDatabase.checkoutReservationById(
+                    reservationId
+                );
+                response.send(result);
+            }
+        );
+        //throw new Error("Method not implemented.");
+    }
     public registerCustomMethods(app: any): void {
        // throw new Error("Method not implemented.");
        app.post(
@@ -207,5 +232,19 @@ export class ReservationApiEndpoint extends ApiEndpoint {
         }
     );
     }
+
+    public registerCustomMethodsTwo(app: any): void {
+        app.post(
+            this.getUrlWithExtension("bills"),
+            authorize,
+            authorizeOnRole,
+            async (request: Request, response: Response) => {
+                const result = await ReservationDatabase.getTypeEvent();
+                response.send(result);
+            }
+        );
+    }
+
+
  
 }

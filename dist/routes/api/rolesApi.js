@@ -17,6 +17,12 @@ const roleDatabase_1 = require("../../db/roleDatabase");
 const apiEndpoint_1 = require("../api/apiEndpoint");
 const auth_1 = require("../auth");
 class RolesApiEndpoint extends apiEndpoint_1.ApiEndpoint {
+    checkoutElement(app) {
+        //throw new Error("Method not implemented.");
+    }
+    registerCustomMethodsTwo(app) {
+        // throw new Error("Method not implemented.");
+    }
     getElementsType(app) {
         //throw new Error("Method not implemented.");
     }

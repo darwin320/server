@@ -52,7 +52,8 @@ export namespace ReservationDatabase{
     export async function searchReservation(
         search: string = "",
         skip?: number,
-        take?: number
+        take?: number,
+        validator?: boolean
     ) {
         return await withPrismaClient<SearchResult<Reservacion>>(
             async (prisma: PrismaClient) => {
@@ -69,11 +70,20 @@ export namespace ReservationDatabase{
                         ],
                     };
                 }
-
-                whereQuery = {
-                    ...whereQuery,
-                    state: true, // Agrega el filtro para state en true
-                };
+                if(!validator){
+                    whereQuery = {
+                        ...whereQuery,
+                        state: true, // Agrega el filtro para state en true
+                        checkout:false
+                    };
+                }else{ 
+                    whereQuery = {  
+                        ...whereQuery,
+                        state: true, // Agrega el filtro para state en true
+                        checkout:true
+                    };
+                }
+              
 
                 const serviceCount = await prisma.reservacion.count({
                     where: whereQuery ?? {},
@@ -109,6 +119,20 @@ export namespace ReservationDatabase{
         });
     }
 
+    export async function checkoutReservationById(id: number) {
+        return await withPrismaClient(async (prisma: PrismaClient) => {
+
+            const reservation = await prisma.reservacion.update({
+                where: {
+                    id,
+                },
+                data: {
+                    checkout: true,
+                },
+            });        
+        });
+    }
+
 
 
     export async function createReservation(reservationInformation: {
@@ -124,6 +148,7 @@ export namespace ReservationDatabase{
         tipoEvento: TypeEvent;
         downPayment: number;
         priceRoomPerHour: number;
+        checkout : boolean;
         inventory: Service[]
     }) {
         const prisma = new PrismaClient();
@@ -143,6 +168,7 @@ export namespace ReservationDatabase{
               tipoEvento: reservationInformation.tipoEvento,
               downPayment: reservationInformation.downPayment,
               priceRoomPerHour: reservationInformation.priceRoomPerHour,
+              checkout: reservationInformation.checkout,
             },
           });
       

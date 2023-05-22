@@ -26,7 +26,12 @@ export abstract class ApiEndpoint {
         this.updateElement(app);
         this.deleteElement(app);
 
+        this.checkoutElement(app);
+
         this.registerCustomMethods(app);
+        this.registerCustomMethodsTwo(app);
+
+        
     }
 
     public sendObjectResponse(_request: Request, response: Response) {
@@ -68,6 +73,9 @@ export abstract class ApiEndpoint {
     public abstract updateElement(app: any): void;
 
     public abstract deleteElement(app: any): void;
+    public abstract checkoutElement(app: any): void;
+
 
     public abstract registerCustomMethods(app: any): void;
+    public abstract registerCustomMethodsTwo(app: any): void;
 }

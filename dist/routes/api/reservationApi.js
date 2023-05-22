@@ -49,7 +49,8 @@ class ReservationApiEndpoint extends apiEndpoint_1.ApiEndpoint {
             const search = request.body.userSearch;
             const skip = request.body.skip;
             const take = request.body.take;
-            const result = yield reservationDatabase_1.ReservationDatabase.searchReservation(search, skip, take);
+            const validator = request.body.validator;
+            const result = yield reservationDatabase_1.ReservationDatabase.searchReservation(search, skip, take, validator);
             response.send(result);
         }));
     }
@@ -76,6 +77,7 @@ class ReservationApiEndpoint extends apiEndpoint_1.ApiEndpoint {
                 tipoEvento: request.body.tipoEvento,
                 downPayment: request.body.downPayment,
                 priceRoomPerHour: request.body.priceRoomPerHour,
+                checkout: request.body.checkout,
                 inventory: request.body.inventory
             });
             response.send(result);
@@ -143,9 +145,23 @@ class ReservationApiEndpoint extends apiEndpoint_1.ApiEndpoint {
         }));
         //throw new Error("Method not implemented.");
     }
+    checkoutElement(app) {
+        app.delete(this.getUrlWithExtension("checkout/:ReservationId"), auth_1.authorize, auth_1.authorizeOnRole, audit_1.logMotion, (request, response) => __awaiter(this, void 0, void 0, function* () {
+            const reservationId = parseInt(request.params["ReservationId"]);
+            const result = yield reservationDatabase_1.ReservationDatabase.checkoutReservationById(reservationId);
+            response.send(result);
+        }));
+        //throw new Error("Method not implemented.");
+    }
     registerCustomMethods(app) {
         // throw new Error("Method not implemented.");
         app.post(this.getUrlWithExtension("typeEvent"), auth_1.authorize, auth_1.authorizeOnRole, (request, response) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield reservationDatabase_1.ReservationDatabase.getTypeEvent();
+            response.send(result);
+        }));
+    }
+    registerCustomMethodsTwo(app) {
+        app.post(this.getUrlWithExtension("bills"), auth_1.authorize, auth_1.authorizeOnRole, (request, response) => __awaiter(this, void 0, void 0, function* () {
             const result = yield reservationDatabase_1.ReservationDatabase.getTypeEvent();
             response.send(result);
         }));

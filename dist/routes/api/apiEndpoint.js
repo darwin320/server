@@ -21,7 +21,9 @@ class ApiEndpoint {
         this.createElement(app);
         this.updateElement(app);
         this.deleteElement(app);
+        this.checkoutElement(app);
         this.registerCustomMethods(app);
+        this.registerCustomMethodsTwo(app);
     }
     sendObjectResponse(_request, response) {
         const result = response.locals.result;

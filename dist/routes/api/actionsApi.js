@@ -15,6 +15,9 @@ const actionDatabase_1 = require("../../db/actionDatabase");
 const apiEndpoint_1 = require("../api/apiEndpoint");
 const auth_1 = require("../auth");
 class ActionsApiEndpoint extends apiEndpoint_1.ApiEndpoint {
+    checkoutElement(app) {
+        //throw new Error("Method not implemented.");
+    }
     getElementsType(app) {
         //throw new Error("Method not implemented.");
     }
@@ -64,5 +67,6 @@ class ActionsApiEndpoint extends apiEndpoint_1.ApiEndpoint {
         });
     }
     registerCustomMethods(_app) { }
+    registerCustomMethodsTwo(_app) { }
 }
 exports.ActionsApiEndpoint = ActionsApiEndpoint;

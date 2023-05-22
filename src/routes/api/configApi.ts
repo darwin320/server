@@ -11,6 +11,9 @@ export type InvoiceConfigDto = {
 };
 
 export class ConfigApiEndpoint extends ApiEndpoint {
+    public registerCustomMethodsTwo(app: any): void {
+       // throw new Error("Method not implemented.");
+    }
     public getElementsType(app: any): void {
        // throw new Error("Method not implemented.");
     }
@@ -29,6 +32,8 @@ export class ConfigApiEndpoint extends ApiEndpoint {
     public updateElement(app: any): void {}
 
     public deleteElement(app: any): void {}
+
+    public checkoutElement(app: any): void {}
 
     public registerCustomMethods(app: any): void {
         app.get(

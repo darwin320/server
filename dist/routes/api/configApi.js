@@ -17,6 +17,9 @@ const configDatabase_1 = require("../../db/configDatabase");
 const apiEndpoint_1 = require("../api/apiEndpoint");
 const auth_1 = require("../auth");
 class ConfigApiEndpoint extends apiEndpoint_1.ApiEndpoint {
+    registerCustomMethodsTwo(app) {
+        // throw new Error("Method not implemented.");
+    }
     getElementsType(app) {
         // throw new Error("Method not implemented.");
     }
@@ -29,6 +32,7 @@ class ConfigApiEndpoint extends apiEndpoint_1.ApiEndpoint {
     createElement(app) { }
     updateElement(app) { }
     deleteElement(app) { }
+    checkoutElement(app) { }
     registerCustomMethods(app) {
         app.get(this.getUrlWithExtension("getInvoiceGenerationDate"), auth_1.authorize, auth_1.authorizeOnRole, (request, response, next) => __awaiter(this, void 0, void 0, function* () {
             const date = yield configDatabase_1.ConfigDatabase.getInvoiceGenerationDate();

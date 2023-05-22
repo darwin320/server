@@ -5,6 +5,12 @@ import { ApiEndpoint } from "../api/apiEndpoint";
 import { authorize, authorizeOnRole } from "../auth";
 
 export class ServicesApiEndpoint extends ApiEndpoint {
+    public checkoutElement(app: any): void {
+        //throw new Error("Method not implemented.");
+    }
+    public registerCustomMethodsTwo(app: any): void {
+        //throw new Error("Method not implemented.");
+    }
     constructor() {
         super("services");
         

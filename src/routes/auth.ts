@@ -67,9 +67,6 @@ export function configureAuthModule(app: any) {
         }),
         (req: Request, res: Response) => {
             const user = req.user as AuthenticatedUser;
-            if(req.user){
-                console.log("validadte Correct")
-            }
             res.status(200).json({ token: user.token } );
         }
     );
@@ -101,7 +98,7 @@ export async function authorize(
 
     const token = authHeader?.split(" ")[1]?.replace(/^"|"$/g, "");
 
-    
+
     try {
         const decoded = jwt.verify(token, 'Claralia') as { userId: number };
         const user = await UserDatabase.getUserById(decoded.userId);

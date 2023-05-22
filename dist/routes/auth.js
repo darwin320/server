@@ -50,9 +50,6 @@ function configureAuthModule(app) {
         session: false
     }), (req, res) => {
         const user = req.user;
-        if (req.user) {
-            console.log("validadte Correct");
-        }
         res.status(200).json({ token: user.token });
     });
     app.get("/auth/canActivate", authorize, (_, response) => response.sendStatus(200));

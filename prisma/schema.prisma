@@ -118,6 +118,7 @@ model Reservacion {
   priceRoomPerHour   Float
   inventario         Inventory?
   state              Boolean @default(true)
+  checkout      Boolean @default(false)
 }
 
 

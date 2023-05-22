@@ -53,7 +53,7 @@ var ReservationDatabase;
         });
     }
     ReservationDatabase.getInventoryWithServices = getInventoryWithServices;
-    function searchReservation(search = "", skip, take) {
+    function searchReservation(search = "", skip, take, validator) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield (0, database_1.withPrismaClient)((prisma) => __awaiter(this, void 0, void 0, function* () {
                 let whereQuery = null;
@@ -68,7 +68,12 @@ var ReservationDatabase;
                         ],
                     };
                 }
-                whereQuery = Object.assign(Object.assign({}, whereQuery), { state: true });
+                if (!validator) {
+                    whereQuery = Object.assign(Object.assign({}, whereQuery), { state: true, checkout: false });
+                }
+                else {
+                    whereQuery = Object.assign(Object.assign({}, whereQuery), { state: true, checkout: true });
+                }
                 const serviceCount = yield prisma.reservacion.count({
                     where: whereQuery !== null && whereQuery !== void 0 ? whereQuery : {},
                 });
@@ -100,6 +105,21 @@ var ReservationDatabase;
         });
     }
     ReservationDatabase.deleteReservationById = deleteReservationById;
+    function checkoutReservationById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield (0, database_1.withPrismaClient)((prisma) => __awaiter(this, void 0, void 0, function* () {
+                const reservation = yield prisma.reservacion.update({
+                    where: {
+                        id,
+                    },
+                    data: {
+                        checkout: true,
+                    },
+                });
+            }));
+        });
+    }
+    ReservationDatabase.checkoutReservationById = checkoutReservationById;
     function createReservation(reservationInformation) {
         return __awaiter(this, void 0, void 0, function* () {
             const prisma = new client_1.PrismaClient();
@@ -118,6 +138,7 @@ var ReservationDatabase;
                         tipoEvento: reservationInformation.tipoEvento,
                         downPayment: reservationInformation.downPayment,
                         priceRoomPerHour: reservationInformation.priceRoomPerHour,
+                        checkout: reservationInformation.checkout,
                     },
                 });
                 const inventory = yield prisma.inventory.create({
